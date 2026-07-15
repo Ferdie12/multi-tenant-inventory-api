@@ -324,4 +324,11 @@ test("inventory listing exposes pagination outside the data array", async () => 
     hasNextPage: true,
     hasPreviousPage: true
   });
+
+  const summary = await request(app)
+    .get(`/inventory/summary?variantId=${variant.id}&page=2&limit=1`)
+    .set(tenantHeaders(tenant))
+    .expect(200);
+  assert.equal(summary.body.data.totalQuantity, 3);
+  assert.equal(summary.body.data.warehouses.length, 1);
 });

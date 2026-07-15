@@ -199,9 +199,17 @@ export async function listInventory(tenantId, filters) {
 
 export async function listInventorySummary(tenantId, filters) {
   const result = await listInventory(tenantId, filters);
+  const total = await prisma.stockLevel.aggregate({
+    where: {
+      tenantId,
+      variantId: filters.variantId,
+      ...(filters.warehouseId ? { warehouseId: filters.warehouseId } : {})
+    },
+    _sum: { quantity: true }
+  });
   return {
     variantId: filters.variantId,
-    totalQuantity: result.items.reduce((total, stock) => total + stock.quantity, 0),
+    totalQuantity: total._sum.quantity ?? 0,
     warehouses: result.items,
     pagination: result.pagination
   };
