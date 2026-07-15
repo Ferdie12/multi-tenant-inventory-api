@@ -978,7 +978,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/inventory?variantId={{variantId}}"
+            "url": "{{baseUrl}}/inventory?variantId={{variantId}}&page=1&limit=50"
           },
           "response": [
             {
@@ -992,7 +992,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/inventory?variantId={{variantId}}"
+                "url": "{{baseUrl}}/inventory?variantId={{variantId}}&page=1&limit=50"
               },
               "status": "OK",
               "code": 200,
@@ -1037,7 +1037,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/inventory/summary?variantId={{variantId}}"
+            "url": "{{baseUrl}}/inventory/summary?variantId={{variantId}}&page=1&limit=50"
           },
           "response": [
             {
@@ -1051,7 +1051,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/inventory/summary?variantId={{variantId}}"
+                "url": "{{baseUrl}}/inventory/summary?variantId={{variantId}}&page=1&limit=50"
               },
               "status": "OK",
               "code": 200,
@@ -1119,7 +1119,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/inventory/adjustments?variantId={{variantId}}"
+            "url": "{{baseUrl}}/inventory/adjustments?variantId={{variantId}}&page=1&limit=50"
           },
           "response": [
             {
@@ -1133,7 +1133,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/inventory/adjustments?variantId={{variantId}}"
+                "url": "{{baseUrl}}/inventory/adjustments?variantId={{variantId}}&page=1&limit=50"
               },
               "status": "OK",
               "code": 200,
@@ -1176,7 +1176,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/products"
+            "url": "{{baseUrl}}/products?page=1&limit=50"
           },
           "response": [
             {
@@ -1190,7 +1190,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/products"
+                "url": "{{baseUrl}}/products?page=1&limit=50"
               },
               "status": "OK",
               "code": 200,
@@ -1650,7 +1650,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}"
+            "url": "{{baseUrl}}/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}&page=1&limit=50"
           },
           "response": [
             {
@@ -1664,7 +1664,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}"
+                "url": "{{baseUrl}}/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}&page=1&limit=50"
               },
               "status": "OK",
               "code": 200,
@@ -2107,7 +2107,7 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/inventory?variantId={{variantId}}"
+            "url": "{{baseUrl}}/inventory?variantId={{variantId}}&page=1&limit=50"
           },
           "response": [
             {
@@ -2121,7 +2121,7 @@
                     "type": "text"
                   }
                 ],
-                "url": "{{baseUrl}}/inventory?variantId={{variantId}}"
+                "url": "{{baseUrl}}/inventory?variantId={{variantId}}&page=1&limit=50"
               },
               "status": "Not Found",
               "code": 404,

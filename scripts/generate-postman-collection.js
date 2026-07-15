@@ -571,7 +571,7 @@ const collection = {
         }),
         request({
           name: "List stock levels in both warehouses",
-          path: "/inventory?variantId={{variantId}}",
+          path: "/inventory?variantId={{variantId}}&page=1&limit=50",
           headers: [tenantHeader],
           tests: [
             expectStatus(200),
@@ -584,14 +584,14 @@ const collection = {
         }),
         request({
           name: "Inventory summary reports total stock",
-          path: "/inventory/summary?variantId={{variantId}}",
+          path: "/inventory/summary?variantId={{variantId}}&page=1&limit=50",
           headers: [tenantHeader],
           examples: [
             savedExample({
               name: "200 - Inventory summary",
               code: 200,
               status: "OK",
-              path: "/inventory/summary?variantId={{variantId}}",
+              path: "/inventory/summary?variantId={{variantId}}&page=1&limit=50",
               headers: [tenantHeader],
               responseBody: {
                 status: "ok",
@@ -634,7 +634,7 @@ const collection = {
         }),
         request({
           name: "Adjustment ledger is complete and immutable",
-          path: "/inventory/adjustments?variantId={{variantId}}",
+          path: "/inventory/adjustments?variantId={{variantId}}&page=1&limit=50",
           headers: [tenantHeader],
           tests: [
             expectStatus(200),
@@ -645,7 +645,7 @@ const collection = {
         }),
         request({
           name: "List products includes the created variant",
-          path: "/products",
+          path: "/products?page=1&limit=50",
           headers: [tenantHeader],
           tests: [
             expectStatus(200),
@@ -739,7 +739,7 @@ const collection = {
         }),
         request({
           name: "Verify failed withdrawal leaves stock unchanged",
-          path: "/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}",
+          path: "/inventory?variantId={{variantId}}&warehouseId={{warehouseId}}&page=1&limit=50",
           headers: [tenantHeader],
           tests: [
             expectStatus(200),
@@ -829,7 +829,7 @@ const collection = {
         }),
         request({
           name: "Tenant B cannot read tenant A inventory",
-          path: "/inventory?variantId={{variantId}}",
+          path: "/inventory?variantId={{variantId}}&page=1&limit=50",
           headers: [tenantBHeader],
           tests: [
             expectStatus(404),

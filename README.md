@@ -32,6 +32,8 @@ The expected environment variables are:
 DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/inventory?schema=public"
 TEST_DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/inventory_test?schema=public"
 PORT=3000
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX=1000
 ```
 
 `DATABASE_URL` stores development data. `TEST_DATABASE_URL` is intentionally separate
@@ -175,14 +177,31 @@ request's **Examples** menu in Postman to view a response without sending the re
 | `GET` | `/health` | Health check |
 | `POST` | `/tenants` | Create a tenant |
 | `POST` | `/products` | Create a schema-driven product |
-| `GET` | `/products` | List products with variants |
+| `GET` | `/products?page=1&limit=50` | List products with variants and pagination |
 | `POST` | `/products/:productId/variants` | Create and validate a variant |
 | `POST` | `/warehouses` | Create a warehouse |
 | `POST` | `/inventory/adjustments` | Atomically add or remove stock |
 | `POST` | `/inventory/transfers` | Atomically move stock between warehouses |
-| `GET` | `/inventory?variantId=...&warehouseId=...` | Read stock levels |
-| `GET` | `/inventory/summary?variantId=...` | Read per-warehouse stock plus total |
-| `GET` | `/inventory/adjustments?variantId=...&warehouseId=...` | Read the adjustment ledger |
+| `GET` | `/inventory?variantId=...&warehouseId=...&page=1&limit=50` | Read stock levels with pagination |
+| `GET` | `/inventory/summary?variantId=...&page=1&limit=50` | Read per-warehouse stock plus total |
+| `GET` | `/inventory/adjustments?variantId=...&warehouseId=...&page=1&limit=50` | Read the adjustment ledger with pagination |
+
+List endpoints keep `data` as an array and return pagination metadata outside it:
+
+```json
+{
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalItems": 25,
+    "totalPages": 3,
+    "hasNextPage": true,
+    "hasPreviousPage": false
+  }
+}
+```
+
+Requests are limited by `RATE_LIMIT_MAX` within `RATE_LIMIT_WINDOW_MS` milliseconds.
 
 Adjustment example:
 
