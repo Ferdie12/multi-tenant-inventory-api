@@ -15,6 +15,14 @@ test("health endpoint reports API readiness", async () => {
   });
 });
 
+test("HTTP responses include security headers and hide the Express fingerprint", async () => {
+  const response = await request(app).get("/health").expect(200);
+
+  assert.equal(response.headers["x-powered-by"], undefined);
+  assert.ok(response.headers["content-security-policy"]);
+  assert.equal(response.headers["x-content-type-options"], "nosniff");
+});
+
 test("unknown routes return a JSON 404", async () => {
   const response = await request(app).get("/does-not-exist").expect(404);
   assert.equal(response.body.status, "error");
