@@ -1,5 +1,7 @@
 import Joi from "joi";
 
+import { paginationInput } from "./common.js";
+
 export const warehouseInput = Joi.object({
   name: Joi.string().trim().min(1).max(160).required(),
   code: Joi.string().trim().min(1).max(60).required()
@@ -17,7 +19,7 @@ export const adjustmentInput = Joi.object({
   reason: Joi.string().trim().max(300).allow(null).optional()
 });
 
-export const inventoryQuery = Joi.object({
+export const inventoryQuery = paginationInput.keys({
   variantId: Joi.string().guid({ version: "uuidv4" }).required(),
   warehouseId: Joi.string().guid({ version: "uuidv4" }).optional()
 });

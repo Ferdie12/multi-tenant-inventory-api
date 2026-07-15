@@ -168,3 +168,43 @@ test("a numeric variant rule cannot define min greater than max", async () => {
 
   assert.equal(response.body.message, "Request validation failed");
 });
+
+test("product listing returns backward-compatible data and pagination metadata", async () => {
+  const tenant = (await request(app).post("/tenants").send({ name: "Acme" })).body.data;
+  for (const sku of ["ONE", "TWO", "THREE"]) {
+    await request(app)
+      .post("/products")
+      .set(tenantHeaders(tenant))
+      .send({
+        name: sku,
+        sku,
+        variantSchema: { size: { type: "string" } }
+      })
+      .expect(201);
+  }
+
+  const response = await request(app)
+    .get("/products?page=2&limit=1")
+    .set(tenantHeaders(tenant))
+    .expect(200);
+
+  assert.equal(response.body.data.length, 1);
+  assert.deepEqual(response.body.pagination, {
+    page: 2,
+    limit: 1,
+    totalItems: 3,
+    totalPages: 3,
+    hasNextPage: true,
+    hasPreviousPage: true
+  });
+});
+
+test("product pagination rejects limits above the safe maximum", async () => {
+  const tenant = (await request(app).post("/tenants").send({ name: "Acme" })).body.data;
+  const response = await request(app)
+    .get("/products?limit=101")
+    .set(tenantHeaders(tenant))
+    .expect(400);
+
+  assert.equal(response.body.message, "Request validation failed");
+});

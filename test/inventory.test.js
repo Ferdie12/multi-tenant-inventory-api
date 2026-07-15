@@ -289,3 +289,39 @@ test("failed stock transfer rolls back both warehouses", async () => {
   assert.equal(summary.body.data.totalQuantity, 2);
   assert.deepEqual(summary.body.data.warehouses.map((stock) => stock.quantity), [2]);
 });
+
+test("inventory listing exposes pagination outside the data array", async () => {
+  const tenant = (await request(app).post("/tenants").send({ name: "Acme" })).body.data;
+  const variant = await createVariant(tenant);
+  const warehouses = [];
+  for (const code of ["JKT", "BDG", "MDN"]) {
+    warehouses.push((await request(app)
+      .post("/warehouses")
+      .set(tenantHeaders(tenant))
+      .send({ name: code, code })
+      .expect(201)).body.data);
+  }
+
+  for (const warehouse of warehouses) {
+    await request(app)
+      .post("/inventory/adjustments")
+      .set(tenantHeaders(tenant))
+      .send({ variantId: variant.id, warehouseId: warehouse.id, delta: 1 })
+      .expect(201);
+  }
+
+  const response = await request(app)
+    .get(`/inventory?variantId=${variant.id}&page=2&limit=1`)
+    .set(tenantHeaders(tenant))
+    .expect(200);
+
+  assert.equal(response.body.data.length, 1);
+  assert.deepEqual(response.body.pagination, {
+    page: 2,
+    limit: 1,
+    totalItems: 3,
+    totalPages: 3,
+    hasNextPage: true,
+    hasPreviousPage: true
+  });
+});

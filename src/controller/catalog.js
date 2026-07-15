@@ -8,6 +8,7 @@ import { validate } from "../validation/common.js";
 import {
   productInput,
   productParams,
+  productQuery,
   tenantInput,
   variantInput
 } from "../validation/catalog.js";
@@ -32,9 +33,12 @@ export async function createProductController(req, res) {
 }
 
 export async function listProductsController(req, res) {
+  const pagination = validate(productQuery, req.query);
+  const result = await listProducts(req.tenantId, pagination);
   return sendSuccess(res, {
     message: "Products retrieved successfully",
-    data: await listProducts(req.tenantId)
+    data: result.items,
+    pagination: result.pagination
   });
 }
 

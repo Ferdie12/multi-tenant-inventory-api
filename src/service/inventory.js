@@ -1,5 +1,6 @@
 import { prisma } from "../application/database.js";
 import { HttpError } from "../error/response-error.js";
+import { buildPagination } from "../validation/common.js";
 
 const MAX_STOCK_QUANTITY = 2147483647;
 
@@ -174,33 +175,57 @@ export async function transferInventory(tenantId, input) {
 export async function listInventory(tenantId, filters) {
   await requireOwnedVariant(prisma, tenantId, filters.variantId);
 
-  return prisma.stockLevel.findMany({
-    where: {
-      tenantId,
-      variantId: filters.variantId,
-      ...(filters.warehouseId ? { warehouseId: filters.warehouseId } : {})
-    },
-    include: { warehouse: true },
-    orderBy: { warehouseId: "asc" }
-  });
-}
-
-export async function listInventorySummary(tenantId, filters) {
-  const warehouses = await listInventory(tenantId, filters);
-  return {
+  const where = {
+    tenantId,
     variantId: filters.variantId,
-    totalQuantity: warehouses.reduce((total, stock) => total + stock.quantity, 0),
-    warehouses
+    ...(filters.warehouseId ? { warehouseId: filters.warehouseId } : {})
+  };
+  const [items, total] = await prisma.$transaction([
+    prisma.stockLevel.findMany({
+      where,
+      include: { warehouse: true },
+      orderBy: { warehouseId: "asc" },
+      skip: (filters.page - 1) * filters.limit,
+      take: filters.limit
+    }),
+    prisma.stockLevel.count({ where })
+  ]);
+
+  return {
+    items,
+    pagination: buildPagination(filters.page, filters.limit, total)
   };
 }
 
-export function listInventoryAdjustments(tenantId, filters) {
-  return prisma.inventoryAdjustment.findMany({
-    where: {
-      tenantId,
-      variantId: filters.variantId,
-      ...(filters.warehouseId ? { warehouseId: filters.warehouseId } : {})
-    },
-    orderBy: { createdAt: "asc" }
-  });
+export async function listInventorySummary(tenantId, filters) {
+  const result = await listInventory(tenantId, filters);
+  return {
+    variantId: filters.variantId,
+    totalQuantity: result.items.reduce((total, stock) => total + stock.quantity, 0),
+    warehouses: result.items,
+    pagination: result.pagination
+  };
+}
+
+export async function listInventoryAdjustments(tenantId, filters) {
+  await requireOwnedVariant(prisma, tenantId, filters.variantId);
+  const where = {
+    tenantId,
+    variantId: filters.variantId,
+    ...(filters.warehouseId ? { warehouseId: filters.warehouseId } : {})
+  };
+  const [items, total] = await prisma.$transaction([
+    prisma.inventoryAdjustment.findMany({
+      where,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      skip: (filters.page - 1) * filters.limit,
+      take: filters.limit
+    }),
+    prisma.inventoryAdjustment.count({ where })
+  ]);
+
+  return {
+    items,
+    pagination: buildPagination(filters.page, filters.limit, total)
+  };
 }

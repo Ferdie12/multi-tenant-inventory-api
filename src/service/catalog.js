@@ -2,6 +2,7 @@ import { prisma } from "../application/database.js";
 import { HttpError } from "../error/response-error.js";
 import { createApiKey } from "../security/api-key.js";
 import { validateVariantAttributes } from "../validation/variant.js";
+import { buildPagination } from "../validation/common.js";
 
 export async function createTenant(data) {
   const apiKey = createApiKey();
@@ -16,12 +17,23 @@ export function createProduct(tenantId, data) {
   return prisma.product.create({ data: { ...data, tenantId } });
 }
 
-export function listProducts(tenantId) {
-  return prisma.product.findMany({
-    where: { tenantId },
-    include: { variants: true },
-    orderBy: { createdAt: "asc" }
-  });
+export async function listProducts(tenantId, { page, limit }) {
+  const skip = (page - 1) * limit;
+  const [items, total] = await prisma.$transaction([
+    prisma.product.findMany({
+      where: { tenantId },
+      include: { variants: true },
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      skip,
+      take: limit
+    }),
+    prisma.product.count({ where: { tenantId } })
+  ]);
+
+  return {
+    items,
+    pagination: buildPagination(page, limit, total)
+  };
 }
 
 export async function createVariant(tenantId, productId, input) {

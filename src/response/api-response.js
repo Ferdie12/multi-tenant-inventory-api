@@ -1,8 +1,9 @@
-export function sendSuccess(res, { status = 200, message, data }) {
+export function sendSuccess(res, { status = 200, message, data, pagination }) {
   return res.status(status).json({
     status: "ok",
     message,
-    data
+    data,
+    ...(pagination ? { pagination } : {})
   });
 }
 

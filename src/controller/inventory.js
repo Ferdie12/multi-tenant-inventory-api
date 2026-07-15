@@ -44,24 +44,31 @@ export async function createTransferController(req, res) {
 
 export async function listAdjustmentsController(req, res) {
   const filters = validate(inventoryQuery, req.query);
+  const result = await listInventoryAdjustments(req.tenantId, filters);
   return sendSuccess(res, {
     message: "Inventory adjustments retrieved successfully",
-    data: await listInventoryAdjustments(req.tenantId, filters)
+    data: result.items,
+    pagination: result.pagination
   });
 }
 
 export async function listStockLevelsController(req, res) {
   const filters = validate(inventoryQuery, req.query);
+  const result = await listInventory(req.tenantId, filters);
   return sendSuccess(res, {
     message: "Stock levels retrieved successfully",
-    data: await listInventory(req.tenantId, filters)
+    data: result.items,
+    pagination: result.pagination
   });
 }
 
 export async function listStockSummaryController(req, res) {
   const filters = validate(inventoryQuery, req.query);
+  const result = await listInventorySummary(req.tenantId, filters);
+  const { pagination, ...data } = result;
   return sendSuccess(res, {
     message: "Inventory summary retrieved successfully",
-    data: await listInventorySummary(req.tenantId, filters)
+    data,
+    pagination
   });
 }

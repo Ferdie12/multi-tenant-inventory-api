@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 import { variantSchemaInput } from "./variant.js";
+import { paginationInput } from "./common.js";
 
 export const tenantInput = Joi.object({
   name: Joi.string().trim().min(1).max(120).required()
@@ -21,3 +22,4 @@ export const productParams = Joi.object({
   productId: Joi.string().guid({ version: "uuidv4" }).required()
 });
 
+export const productQuery = paginationInput;
