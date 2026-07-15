@@ -192,6 +192,49 @@ const exampleData = {
   "Tenant B cannot list tenant A products": []
 };
 
+const examplePagination = {
+  "List stock levels in both warehouses": {
+    page: 1,
+    limit: 50,
+    totalItems: 2,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false
+  },
+  "Adjustment ledger is complete and immutable": {
+    page: 1,
+    limit: 50,
+    totalItems: 4,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false
+  },
+  "List products includes the created variant": {
+    page: 1,
+    limit: 50,
+    totalItems: 1,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false
+  },
+  "Verify failed withdrawal leaves stock unchanged": {
+    page: 1,
+    limit: 50,
+    totalItems: 1,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false
+  },
+  "Tenant B cannot list tenant A products": {
+    page: 1,
+    limit: 50,
+    totalItems: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
+  }
+};
+
 const errorMessages = {
   "Protected route rejects a missing API key": "x-tenant-api-key header is required",
   "Protected route rejects an invalid API key": "Invalid tenant API key",
@@ -245,7 +288,8 @@ function defaultExample({ name, method, path, headers, body, tests }) {
     : {
         status: "ok",
         message: exampleMessages[name] ?? `${name} succeeded`,
-        data: exampleData[name] ?? {}
+        data: exampleData[name] ?? {},
+        ...(examplePagination[name] ? { pagination: examplePagination[name] } : {})
       };
 
   return savedExample({

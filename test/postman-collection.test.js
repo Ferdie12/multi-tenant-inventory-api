@@ -72,3 +72,24 @@ test("every Postman request has a saved example for its tested status", async ()
     /body\.data\.productId\)\.to\.eql\(pm\.collectionVariables\.get\('productId'\)\)/
   );
 });
+
+test("every successful paginated list example includes pagination metadata", async () => {
+  const collection = await readCollection();
+  const requests = collectRequests(collection.item);
+  const paginatedLists = [
+    "List stock levels in both warehouses",
+    "Inventory summary reports total stock",
+    "Adjustment ledger is complete and immutable",
+    "List products includes the created variant",
+    "Verify failed withdrawal leaves stock unchanged",
+    "Tenant B cannot list tenant A products"
+  ];
+
+  for (const name of paginatedLists) {
+    const request = findRequest(requests, name);
+    const example = request.response.find(({ code }) => code === 200);
+    assert.ok(example, `${name} is missing a saved 200 response example`);
+    const body = JSON.parse(example.body);
+    assert.ok(body.pagination, `${name} is missing pagination metadata`);
+  }
+});
