@@ -1,0 +1,27 @@
+{
+  "name": "multi-tenant-inventory-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "test": "NODE_ENV=test node --env-file-if-exists=.env --test --test-concurrency=1 test/*.test.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:test": "node --env-file-if-exists=.env scripts/migrate-test.js",
+    "postman:generate": "node scripts/generate-postman-collection.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "express": "5.1.0",
+    "joi": "^18.2.3"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.3",
+    "supertest": "7.1.4"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
