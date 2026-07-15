@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import express from "express";
 import request from "supertest";
 
 import { createApp } from "../src/app.js";
+import { createRateLimiter } from "../src/middleware/rate-limit.js";
 
 const app = createApp();
 
@@ -21,6 +23,22 @@ test("HTTP responses include security headers and hide the Express fingerprint",
   assert.equal(response.headers["x-powered-by"], undefined);
   assert.ok(response.headers["content-security-policy"]);
   assert.equal(response.headers["x-content-type-options"], "nosniff");
+});
+
+test("rate limiter returns a consistent 429 response after the configured limit", async () => {
+  const limitedApp = express();
+  limitedApp.use(createRateLimiter({ windowMs: 60_000, limit: 1 }));
+  limitedApp.get("/limited", (_req, res) => res.json({ status: "ok" }));
+
+  await request(limitedApp).get("/limited").expect(200);
+  const response = await request(limitedApp).get("/limited").expect(429);
+
+  assert.deepEqual(response.body, {
+    status: "error",
+    message: "Too many requests"
+  });
+  assert.ok(response.headers["ratelimit"]);
+  assert.equal(response.headers["x-ratelimit-limit"], undefined);
 });
 
 test("unknown routes return a JSON 404", async () => {
