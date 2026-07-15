@@ -1063,7 +1063,7 @@
                 }
               ],
               "cookie": [],
-              "body": "{\n  \"status\": \"ok\",\n  \"message\": \"Inventory summary retrieved successfully\",\n  \"data\": {\n    \"variantId\": \"33333333-3333-4333-8333-333333333333\",\n    \"totalQuantity\": 7,\n    \"warehouses\": [\n      {\n        \"warehouseId\": \"44444444-4444-4444-8444-444444444444\",\n        \"quantity\": 5\n      },\n      {\n        \"warehouseId\": \"55555555-5555-4555-8555-555555555555\",\n        \"quantity\": 2\n      }\n    ]\n  }\n}"
+              "body": "{\n  \"status\": \"ok\",\n  \"message\": \"Inventory summary retrieved successfully\",\n  \"data\": {\n    \"variantId\": \"33333333-3333-4333-8333-333333333333\",\n    \"totalQuantity\": 7,\n    \"warehouses\": [\n      {\n        \"warehouseId\": \"44444444-4444-4444-8444-444444444444\",\n        \"quantity\": 5\n      },\n      {\n        \"warehouseId\": \"55555555-5555-4555-8555-555555555555\",\n        \"quantity\": 2\n      }\n    ]\n  },\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 50,\n    \"totalItems\": 2,\n    \"totalPages\": 1,\n    \"hasNextPage\": false,\n    \"hasPreviousPage\": false\n  }\n}"
             },
             {
               "name": "400 - Invalid variant ID",
@@ -1102,7 +1102,9 @@
                   "pm.expect(body.status).to.eql('ok');",
                   "pm.expect(body).to.have.property('data');",
                   "pm.expect(body.data.totalQuantity).to.eql(7);",
-                  "pm.expect(body.data.warehouses).to.have.length(2);"
+                  "pm.expect(body.data.warehouses).to.have.length(2);",
+                  "pm.expect(body.pagination.totalItems).to.eql(2);",
+                  "pm.expect(body.pagination.hasNextPage).to.eql(false);"
                 ]
               }
             }

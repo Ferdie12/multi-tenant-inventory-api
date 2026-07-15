@@ -609,6 +609,14 @@ const collection = {
                       quantity: 2
                     }
                   ]
+                },
+                pagination: {
+                  page: 1,
+                  limit: 50,
+                  totalItems: 2,
+                  totalPages: 1,
+                  hasNextPage: false,
+                  hasPreviousPage: false
                 }
               }
             }),
@@ -629,7 +637,9 @@ const collection = {
             expectStatus(200),
             ...successEnvelope,
             "pm.expect(body.data.totalQuantity).to.eql(7);",
-            "pm.expect(body.data.warehouses).to.have.length(2);"
+            "pm.expect(body.data.warehouses).to.have.length(2);",
+            "pm.expect(body.pagination.totalItems).to.eql(2);",
+            "pm.expect(body.pagination.hasNextPage).to.eql(false);"
           ]
         }),
         request({
